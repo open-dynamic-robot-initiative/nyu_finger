@@ -107,8 +107,8 @@ void NYUFinger::initialize(const std::string &network_id)
 
     // fix the polarity to be the same as the urdf model.
     reverse_polarities_ = {false,
-                           true,
-                           true};
+                           false,
+                           false};
     joints_.set_joint_polarities(reverse_polarities_);
 
     // The the control gains in order to perform the calibration
