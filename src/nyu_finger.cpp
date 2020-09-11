@@ -31,8 +31,8 @@ NYUFinger::NYUFinger()
     }
     for(unsigned i = 0; i < motor_board_enabled_.size(); ++i)
     {
-        motor_board_enabled_[0] = false;
-        motor_board_errors_[0] = 0;
+	motor_board_enabled_[i] = false;
+        motor_board_errors_[i] = 0;
     }
 
     /**
@@ -69,7 +69,7 @@ void NYUFinger::initialize(const std::string &network_id)
 
     // Create the different mapping
     map_joint_id_to_motor_board_id_ = {0, 1, 1};
-    map_joint_id_to_motor_port_id_ = {0, 1, 0};
+    map_joint_id_to_motor_port_id_ = {1, 0, 1};
 
     // Initialize the communication with the main board.
     main_board_ptr_ = std::make_shared<MasterBoardInterface>(network_id_);
