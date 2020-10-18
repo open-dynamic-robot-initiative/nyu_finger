@@ -185,21 +185,21 @@
     <parent link="finger_base_link"/>
     <child link="finger_upper_link"/>
     <limit effort="1000" lower="-1.57079632679" upper="1.57079632679" velocity="1000"/>
-    <axis xyz="-1 0 0"/>
+    <axis xyz="1 0 0"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
   <joint name="finger_upper_to_middle_joint" type="revolute">
     <parent link="finger_upper_link"/>
     <child link="finger_middle_link"/>
     <limit effort="1000" lower="-1.57079632679" upper="1.57079632679" velocity="1000"/>
-    <axis xyz="0 1 0"/>
+    <axis xyz="0 -1 0"/>
     <origin rpy="0 0 0" xyz="0 -0.014 0"/>
   </joint>
   <joint name="finger_middle_to_lower_joint" type="revolute">
     <parent link="finger_middle_link"/>
     <child link="finger_lower_link"/>
     <limit effort="1000" lower="-3.14159265359" upper="3.14159265359" velocity="1000"/>
-    <axis xyz="0 1 0"/>
+    <axis xyz="0 -1 0"/>
     <origin rpy="0 0 0" xyz="0 -0.03745 -0.16"/>
   </joint>
   <!--

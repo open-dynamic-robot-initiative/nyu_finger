@@ -10,7 +10,7 @@ import numpy as np
 import pybullet as p
 
 
-import pinocchio_bullet_wrapper
+import nyu_finger_sim.pinocchio_bullet_wrapper as pinocchio_bullet_wrapper
 import pinocchio as pin
 from pinocchio.robot_wrapper import RobotWrapper
 
@@ -20,6 +20,7 @@ import os.path
 class NYUFingerSimulator:
     def __init__(self):
         # Connet to pybullet and setup simulation parameters.
+        self.dt = 0.001
         p.connect(p.GUI)
         p.setGravity(0, 0, -9.81)
         p.setPhysicsEngineParameter(fixedTimeStep=1.0/1000.0, numSubSteps=1)
@@ -35,14 +36,13 @@ class NYUFingerSimulator:
         robotStartPos = [0.,0,.0]
         robotStartOrientation = p.getQuaternionFromEuler([0,0,0])
 
-        urdf_path = '../urdf/fingeredu.urdf'
-
+        urdf_path = '../../urdf/fingeredu.urdf'
         self.robotId = p.loadURDF(urdf_path, robotStartPos,
                 robotStartOrientation, flags=p.URDF_USE_INERTIA_FROM_FILE,
                 useFixedBase=True)
         
         # Create pinocchio robot
-        self.pin_robot = RobotWrapper.BuildFromURDF(urdf_path, [os.path.abspath('../urdf/')])
+        self.pin_robot = RobotWrapper.BuildFromURDF(urdf_path, [os.path.abspath('../../urdf/')])
         
         # Create a wrapper between the pinocchio and pybullet robot.
         joint_names = [
@@ -58,11 +58,15 @@ class NYUFingerSimulator:
     def get_state(self):
         return self.robot.get_state()
     
-    def reset_state(self, q, v):
-        self.robot.reset_state(q, v)
+    def reset_state(self, q):
+        self.robot.reset_state(q, [0, 0, 0])
         
     def send_joint_torque(self, tau):
         self.robot.send_joint_command(tau)
+        
+    def add_ball(self, x_des, y_des):
+        self.ball1 = p.loadURDF("../../urdf/ball1.urdf")
+        p.resetBasePositionAndOrientation(self.ball1, [x_des-0.3, -0.05, 0.285+y_des], (0., 0., 0.5, 0.5))
         
     def step(self):
         time.sleep(0.001)
