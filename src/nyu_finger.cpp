@@ -68,8 +68,13 @@ void NYUFinger::initialize(const std::string &network_id)
     network_id_ = network_id;
 
     // Create the different mapping
+    // for robot 1
+    // map_joint_id_to_motor_board_id_ = {1, 0, 0};
+    // map_joint_id_to_motor_port_id_ = {0, 0, 1};
+
+    // for robot_2
     map_joint_id_to_motor_board_id_ = {1, 0, 0};
-    map_joint_id_to_motor_port_id_ = {0, 0, 1};
+    map_joint_id_to_motor_port_id_ = {1, 0, 1};
 
     // Initialize the communication with the main board.
     main_board_ptr_ = std::make_shared<MasterBoardInterface>(network_id_);
@@ -109,6 +114,8 @@ void NYUFinger::initialize(const std::string &network_id)
     reverse_polarities_ = {false,
                            true,
                            true};
+
+
     joints_.set_joint_polarities(reverse_polarities_);
 
     // The the control gains in order to perform the calibration
