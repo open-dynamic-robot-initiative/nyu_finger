@@ -1,10 +1,13 @@
+import time
 import numpy as np
-from nyu_finger_sim.nyu_finger_simulator import  NYUFingerSimulator
+import matplotlib.pylab as plt
+from nyu_finger import NYUFingerReal
 
-robot = NYUFingerSimulator()
+robot = NYUFingerReal()
+robot.initialize('enp5s0f1')
 
 
-P = 1.
+P = 1.5
 D = 0.05
 des_pos = np.array([0, -0.6, 1.2])
 
