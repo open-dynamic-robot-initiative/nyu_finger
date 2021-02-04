@@ -212,9 +212,9 @@ bool NYUFinger::calibrate(const Vector3d& home_offset_rad)
     double search_distance_limit_rad =
         10.0 * (2.0 * M_PI / joint_gear_ratios_(0));
     Vector3d profile_step_size_rad = Vector3d::Constant(0.001);
-    blmc_robots::HomingReturnCode homing_return_code = joints_.execute_homing(
+    blmc_drivers::HomingReturnCode homing_return_code = joints_.execute_homing(
         search_distance_limit_rad, home_offset_rad, profile_step_size_rad);
-    if (homing_return_code == blmc_robots::HomingReturnCode::FAILED)
+    if (homing_return_code == blmc_drivers::HomingReturnCode::FAILED)
     {
         return false;
     }
@@ -223,4 +223,4 @@ bool NYUFinger::calibrate(const Vector3d& home_offset_rad)
     return true;
 }
 
-}  // namespace blmc_robots
+}  // namespace nyu_finger

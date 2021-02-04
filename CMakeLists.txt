@@ -41,13 +41,13 @@ macro(create_robots_library lib_name)
     src/${lib_name}.cpp
   )
 
-  target_link_libraries(${lib_name} INTERFACE Eigen3::Eigen)
-  target_link_libraries(${lib_name} INTERFACE blmc_drivers::blmc_drivers)
-  target_link_libraries(${lib_name} INTERFACE blmc_robots::blmc_robots)
-  target_link_libraries(${lib_name} INTERFACE real_time_tools::real_time_tools)
+  target_link_libraries(${lib_name} Eigen3::Eigen)
+  target_link_libraries(${lib_name} blmc_drivers::blmc_drivers)
+  target_link_libraries(${lib_name} blmc_robots::blmc_robots)
+  target_link_libraries(${lib_name} real_time_tools::real_time_tools)
 
   if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    target_link_libraries(${lib_name} INTERFACE rt pthread)
+    target_link_libraries(${lib_name} rt pthread)
   endif()
 
   # Includes. Add the include dependencies

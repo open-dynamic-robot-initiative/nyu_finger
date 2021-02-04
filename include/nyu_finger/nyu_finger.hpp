@@ -11,7 +11,7 @@
 #include <blmc_drivers/devices/spi_motor_board.hpp>
 #include "blmc_robots/common_header.hpp"
 #include "blmc_drivers/serial_reader.hpp"
-#include "blmc_robots/blmc_joint_module.hpp"
+#include "blmc_drivers/blmc_joint_module.hpp"
 #include "blmc_robots/common_header.hpp"
 
 namespace nyu_finger
@@ -378,7 +378,7 @@ private:
     std::array<blmc_robots::Slider_ptr, 4> sliders_;
 
     /** @brief Joint modules containing the driving system paramters */
-    blmc_robots::BlmcJointModules<3> joints_;
+    blmc_drivers::BlmcJointModules<3> joints_;
 
     /** @brief Address the rotation direction of the motor. */
     std::array<bool, 3> reverse_polarities_;
