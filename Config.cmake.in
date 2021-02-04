@@ -1,0 +1,14 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/nyu_fingerTargets.cmake")
+
+include(CMakeFindDependencyMacro)
+
+# we do not add the other dependencies because these are header files lib
+find_dependency(yaml-cpp CONFIG REQUIRED)
+find_dependency(Eigen3 REQUIRED)
+find_dependency(blmc_drivers REQUIRED)
+find_dependency(blmc_robots REQUIRED)
+find_dependency(real_time_tools REQUIRED)
+
+check_required_components(nyu_finger)
