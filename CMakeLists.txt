@@ -88,7 +88,7 @@ target_link_libraries(py_nyu_finger PRIVATE nyu_finger)
 
 # install the bindings
 get_python_install_dir(python_install_dir)
-install(TARGETS py_nyu_finger DESTINATION ${python_install_dir})
+install(TARGETS py_nyu_finger DESTINATION ${python_install_dir}/${PROJECT_NAME})
 
 # install the python package too
 install(

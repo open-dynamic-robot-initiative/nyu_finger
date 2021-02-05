@@ -69,7 +69,7 @@ void NYUFinger::initialize(const std::string &network_id)
 
     // Create the different mapping
     map_joint_id_to_motor_board_id_ = {0, 1, 1};
-    map_joint_id_to_motor_port_id_ = {1, 0, 1};
+    map_joint_id_to_motor_port_id_ = {0, 1, 0};
 
     // Initialize the communication with the main board.
     main_board_ptr_ = std::make_shared<MasterBoardInterface>(network_id_);
