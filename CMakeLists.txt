@@ -56,7 +56,7 @@ macro(create_robots_library lib_name)
   target_link_libraries(${PROJECT_NAME} INTERFACE Eigen3::Eigen)
 
   if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    target_link_libraries(${lib_name} rt pthread)
+    target_link_libraries(${lib_name} INTERFACE rt pthread)
   endif()
 
   # Includes. Add the include dependencies

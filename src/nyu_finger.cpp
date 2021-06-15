@@ -1,6 +1,5 @@
 #include "nyu_finger/nyu_finger.hpp"
 #include <cmath>
-#include <odri_control_interface/common.hpp>
 
 #include "real_time_tools/spinner.hpp"
 
