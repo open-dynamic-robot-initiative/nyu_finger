@@ -1,11 +1,13 @@
 #include "nyu_finger/nyu_finger.hpp"
 #include <cmath>
-#include "blmc_robots/common_programs_header.hpp"
+#include <odri_control_interface/common.hpp>
+
 #include "real_time_tools/spinner.hpp"
 
 namespace nyu_finger
 {
-const double NYUFinger::max_joint_torque_security_margin_ = 0.99;
+
+using namespace odri_control_interface;
 
 NYUFinger::NYUFinger()
 {
@@ -31,7 +33,7 @@ NYUFinger::NYUFinger()
     }
     for(unsigned i = 0; i < motor_board_enabled_.size(); ++i)
     {
-	motor_board_enabled_[i] = false;
+	    motor_board_enabled_[i] = false;
         motor_board_errors_[i] = 0;
     }
 
@@ -45,11 +47,6 @@ NYUFinger::NYUFinger()
     joint_encoder_index_.setZero();
 
     /**
-     * Additional data
-     */
-    slider_positions_.setZero();
-
-    /**
      * Setup some known data
      */
 
@@ -59,167 +56,160 @@ NYUFinger::NYUFinger()
     motor_inertias_.fill(0.045);
     joint_gear_ratios_.fill(9.0);
 
-    // By default assume the estop is active.
-    active_estop_= true;
+    state_ = Solo12State::initial;
 }
 
 void NYUFinger::initialize(const std::string &network_id)
 {
     network_id_ = network_id;
 
-    // Create the different mapping
-    map_joint_id_to_motor_board_id_ = {0, 1, 1};
-    map_joint_id_to_motor_port_id_ = {0, 1, 0};
-
-    // Initialize the communication with the main board.
     main_board_ptr_ = std::make_shared<MasterBoardInterface>(network_id_);
-    main_board_ptr_->Init();
 
-    // create the SpiBus (blmc_drivers wrapper around the MasterBoardInterface)
-    spi_bus_ = std::make_shared<blmc_drivers::SpiBus>(main_board_ptr_,
-                                                      motor_boards_.size());
+    VectorXi motor_numbers(3);
+    motor_numbers << 0, 3, 2;
+    VectorXb motor_reversed(3);
+    motor_reversed << false, false, false;
 
-    // create the motor board objects:
-    for(size_t mb_id = 0; mb_id < motor_boards_.size(); ++mb_id)
-    {
-        motor_boards_[mb_id] =
-            std::make_shared<blmc_drivers::SpiMotorBoard>(spi_bus_, mb_id);
-    }
 
-    // Create the motors object. j_id is the joint_id
-    for (unsigned j_id = 0; j_id < motors_.size(); ++j_id)
-    {
-        motors_[j_id] = std::make_shared<blmc_drivers::Motor>(
-            motor_boards_[map_joint_id_to_motor_board_id_[j_id]],
-            map_joint_id_to_motor_port_id_[j_id]);
-    }
+    double HAA = 1.0;
+    double HFE = 1.0;
+    double KFE = 1.0;
+    Eigen::VectorXd joint_lower_limits(3);
+    Eigen::VectorXd joint_upper_limits(3);
+    joint_lower_limits << -HAA, -HFE, -KFE;
+    joint_upper_limits << HAA, HFE, KFE;
 
-    // // Use a serial port to read slider values.
-    // serial_reader_ = std::make_shared<blmc_drivers::SerialReader>(serial_port, 5);
+    // Define the joint module.
+    joints_ = std::make_shared<odri_control_interface::JointModules>(
+        main_board_ptr_,
+        motor_numbers,
+        motor_torque_constants_(0),
+        joint_gear_ratios_(0),
+        motor_max_current_(0),
+        motor_reversed,
+        joint_lower_limits,
+        joint_upper_limits,
+        20.,
+        0.2);
 
-    // Create the joint module objects
-    joints_.set_motor_array(motors_, motor_torque_constants_, joint_gear_ratios_,
-                            joint_zero_positions_, motor_max_current_);
+    // Define the robot.
+    robot_ = std::make_shared<odri_control_interface::Robot>(
+        main_board_ptr_, joints_, nullptr /* imu */);
 
-    // Set the maximum joint torque available
-    max_joint_torques_ =
-        max_joint_torque_security_margin_ * joints_.get_max_torques().array();
+    // Define the calibration.
+    std::vector<odri_control_interface::CalibrationMethod> directions{
+        odri_control_interface::POSITIVE,
+        odri_control_interface::POSITIVE,
+        odri_control_interface::POSITIVE,
+    };
 
-    // fix the polarity to be the same as the urdf model.
-    reverse_polarities_ = {false,
-                           false,
-                           false};
-    joints_.set_joint_polarities(reverse_polarities_);
+    // Use zero position offsets for now. Gets updated in the calibration
+    // method.
+    Eigen::VectorXd position_offsets(3);
+    position_offsets.fill(0.);
+    calib_ctrl_ = std::make_shared<odri_control_interface::JointCalibrator>(
+        robot_->joints, directions, position_offsets, 5., 0.05, 1.0, 0.001);
 
-    // The the control gains in order to perform the calibration
-    nyu_finger::Vector3d kp, kd;
-    kp.fill(2.0);
-    kd.fill(0.05);
-    joints_.set_position_control_gains(kp, kd);
-
-    // Wait until all the motors are ready.
-    spi_bus_->wait_until_ready();
-
-    rt_printf("All motors and boards are ready.\n");
+    // Initialize the robot.
+    robot_->Init();
 }
 
 void NYUFinger::acquire_sensors()
 {
+    robot_->ParseSensorData();
+
+    auto joints = robot_->joints;
+    auto imu = robot_->imu;
+
     /**
      * Joint data
      */
     // acquire the joint position
-    joint_positions_ = joints_.get_measured_angles();
+    joint_positions_ = joints->GetPositions();
     // acquire the joint velocities
-    joint_velocities_ = joints_.get_measured_velocities();
+    joint_velocities_ = joints->GetVelocities();
     // acquire the joint torques
-    joint_torques_ = joints_.get_measured_torques();
+    joint_torques_ = joints->GetMeasuredTorques();
     // acquire the target joint torques
-    joint_target_torques_ = joints_.get_sent_torques();
-
-    // The index angle is not transmitted.
-    joint_encoder_index_ = joints_.get_measured_index_angles();
-
-    /**
-     * Additional data
-     */
-    // acquire the slider positions
-    // TODO: Handle case that no new values are arriving.
-    // serial_reader_->fill_vector(slider_positions_vector_);
-    // for (unsigned i = 0; i < slider_positions_.size(); ++i)
-    // {
-    //     // acquire the slider
-    //     slider_positions_(i) = double(slider_positions_vector_[i+1]) / 1024.;
-    // }
-
-    // active_estop_ = slider_positions_vector_[0] == 0;
-    active_estop_ = false;
+    joint_target_torques_ = joints->GetSentTorques();
 
     /**
      * The different status.
      */
 
     // motor board status
-    for (size_t i = 0; i < motor_boards_.size(); ++i)
+    ConstRefVectorXi motor_board_errors = joints->GetMotorDriverErrors();
+    ConstRefVectorXb motor_driver_enabled = joints->GetMotorDriverEnabled();
+    for (int i = 0; i < 2; i++)
     {
-        const blmc_drivers::MotorBoardStatus& motor_board_status =
-            motor_boards_[i]->get_status()->newest_element();
-        motor_board_enabled_[i] = motor_board_status.system_enabled;
-        motor_board_errors_[i] = motor_board_status.error_code;
+        motor_board_errors_[i] = motor_board_errors[i];
+        motor_board_enabled_[i] = motor_driver_enabled[i];
     }
-    // motors status
-    for (size_t j_id = 0; j_id < motors_.size(); ++j_id)
-    {
-        const blmc_drivers::MotorBoardStatus& motor_board_status =
-            motor_boards_[map_joint_id_to_motor_board_id_[j_id]]
-                ->get_status()->newest_element();
 
-        motor_enabled_[j_id] = (map_joint_id_to_motor_port_id_[j_id] == 1)
-                                   ? motor_board_status.motor2_enabled
-                                   : motor_board_status.motor1_enabled;
-        motor_ready_[j_id] = (map_joint_id_to_motor_port_id_[j_id] == 1)
-                                   ? motor_board_status.motor2_ready
-                                   : motor_board_status.motor1_ready;
+    // motors status
+    ConstRefVectorXb motor_enabled = joints->GetEnabled();
+    ConstRefVectorXb motor_ready = joints->GetReady();
+    for (int i = 0; i < 3; i++)
+    {
+        motor_enabled_[i] = motor_enabled[i];
+        motor_ready_[i] = motor_ready[i];
     }
 }
 
 void NYUFinger::set_max_joint_torques(const double& max_joint_torques)
 {
-    max_joint_torques_.fill(max_joint_torques);
+    robot_->joints->SetMaximumCurrents(max_current);
 }
 
 void NYUFinger::send_target_joint_torque(
     const Eigen::Ref<Vector3d> target_joint_torque)
 {
-    static int estop_msg_counter_ = 0;
-    Vector3d ctrl_torque = target_joint_torque;
-    if (active_estop_) {
-        ctrl_torque.fill(0.);
-        estop_msg_counter_ += 1;
-        if (estop_msg_counter_ % 5000 == 0) {
-            rt_printf("NYUFinger: estop is active. Setting ctrl_torque to zero.\n");
-        }
+robot_->joints->SetTorques(target_joint_torque);
+
+    switch (state_)
+    {
+        case NYUFingerState::initial:
+            robot_->joints->SetZeroCommands();
+            if (!robot_->IsTimeout() && !robot_->IsAckMsgReceived())
+            {
+                robot_->SendInit();
+            }
+            else if (!robot_->IsReady())
+            {
+                robot_->SendCommand();
+            }
+            else
+            {
+                state_ = NYUFingerState::ready;
+            }
+            break;
+
+        case NYUFingerState::ready:
+            if (calibrate_request_)
+            {
+                calibrate_request_ = false;
+                state_ = NYUFingerState::calibrate;
+                robot_->joints->SetZeroCommands();
+            }
+            robot_->SendCommand();
+            break;
+
+        case NYUFingerState::calibrate:
+            if (calib_ctrl_->Run())
+            {
+                state_ = NYUFingerState::ready;
+            }
+            robot_->SendCommand();
+            break;
     }
-    ctrl_torque = ctrl_torque.array().min(max_joint_torques_);
-    ctrl_torque = ctrl_torque.array().max(-max_joint_torques_);
-    joints_.set_torques(ctrl_torque);
-    joints_.send_torques();
 }
 
 bool NYUFinger::calibrate(const Vector3d& home_offset_rad)
 {
-    // Maximum distance is twice the angle between joint indexes
-    double search_distance_limit_rad =
-        10.0 * (2.0 * M_PI / joint_gear_ratios_(0));
-    Vector3d profile_step_size_rad = Vector3d::Constant(0.001);
-    blmc_drivers::HomingReturnCode homing_return_code = joints_.execute_homing(
-        search_distance_limit_rad, home_offset_rad, profile_step_size_rad);
-    if (homing_return_code == blmc_drivers::HomingReturnCode::FAILED)
-    {
-        return false;
-    }
-    Vector3d zero_pose = Vector3d::Zero();
-    joints_.go_to(zero_pose);
+    printf("NYUFinger::request_calibration called\n");
+    Eigen::VectorXd hor = home_offset_rad;
+    calib_ctrl_->UpdatePositionOffsets(hor);
+    calibrate_request_ = true;
     return true;
 }
 
