@@ -45,18 +45,18 @@ macro(create_robots_library lib_name)
     src/${lib_name}.cpp
   )
 
-  target_link_libraries(${PROJECT_NAME} INTERFACE blmc_drivers::blmc_drivers)
+  target_link_libraries(${PROJECT_NAME} blmc_drivers::blmc_drivers)
   target_link_libraries(${PROJECT_NAME}
-                        INTERFACE odri_control_interface::odri_control_interface)
+                        odri_control_interface::odri_control_interface)
   target_link_libraries(${PROJECT_NAME}
-                        INTERFACE master_board_sdk::master_board_sdk)
+                        master_board_sdk::master_board_sdk)
   target_link_libraries(${PROJECT_NAME}
-                        INTERFACE real_time_tools::real_time_tools)
-  target_link_libraries(${PROJECT_NAME} INTERFACE yaml_utils::yaml_utils)
-  target_link_libraries(${PROJECT_NAME} INTERFACE Eigen3::Eigen)
+                        real_time_tools::real_time_tools)
+  target_link_libraries(${PROJECT_NAME} yaml_utils::yaml_utils)
+  target_link_libraries(${PROJECT_NAME} Eigen3::Eigen)
 
   if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    target_link_libraries(${lib_name} INTERFACE rt pthread)
+    target_link_libraries(${lib_name} rt pthread)
   endif()
 
   # Includes. Add the include dependencies
@@ -84,20 +84,20 @@ install(
 # we also need to install the header files
 install(DIRECTORY include/ DESTINATION include)
 
-# #
-# # Python bindings
-# #
-# set(py_nyu_finger_SRC_FILES
-#   src/nyu_finger.cpp
-#   srcpy/py_nyu_finger.cpp
-# )
-# pybind11_add_module(py_nyu_finger MODULE ${py_nyu_finger_SRC_FILES})
-# target_link_libraries(py_nyu_finger PRIVATE pybind11::module)
-# target_link_libraries(py_nyu_finger PRIVATE nyu_finger)
+#
+# Python bindings
+#
+set(py_nyu_finger_SRC_FILES
+  src/nyu_finger.cpp
+  srcpy/py_nyu_finger.cpp
+)
+pybind11_add_module(py_nyu_finger MODULE ${py_nyu_finger_SRC_FILES})
+target_link_libraries(py_nyu_finger PRIVATE pybind11::module)
+target_link_libraries(py_nyu_finger PRIVATE nyu_finger)
 
-# # install the bindings
-# get_python_install_dir(python_install_dir)
-# install(TARGETS py_nyu_finger DESTINATION ${python_install_dir}/${PROJECT_NAME})
+# install the bindings
+get_python_install_dir(python_install_dir)
+install(TARGETS py_nyu_finger DESTINATION ${python_install_dir}/${PROJECT_NAME})
 
 # install the python package too
 install(

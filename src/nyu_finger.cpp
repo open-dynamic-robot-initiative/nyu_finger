@@ -1,5 +1,7 @@
-#include "nyu_finger/nyu_finger.hpp"
 #include <cmath>
+#include <memory>
+
+#include "nyu_finger/nyu_finger.hpp"
 
 #include "real_time_tools/spinner.hpp"
 
@@ -19,8 +21,6 @@ NYUFinger::NYUFinger()
     motor_max_current_.setZero();
     max_joint_torques_.setZero();
     joint_zero_positions_.setZero();
-    reverse_polarities_.fill(false);
-    slider_positions_vector_.resize(5);
 
     /**
      * Hardware status
@@ -55,7 +55,7 @@ NYUFinger::NYUFinger()
     motor_inertias_.fill(0.045);
     joint_gear_ratios_.fill(9.0);
 
-    state_ = Solo12State::initial;
+    state_ = NYUFingerState::initial;
 }
 
 void NYUFinger::initialize(const std::string &network_id)
@@ -155,7 +155,7 @@ void NYUFinger::acquire_sensors()
     }
 }
 
-void NYUFinger::set_max_joint_torques(const double& max_joint_torques)
+void NYUFinger::set_max_current(const double& max_current)
 {
     robot_->joints->SetMaximumCurrents(max_current);
 }

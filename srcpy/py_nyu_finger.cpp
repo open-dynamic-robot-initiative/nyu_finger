@@ -28,14 +28,14 @@ PYBIND11_MODULE(py_nyu_finger, m)
 {
     py::class_<NYUFinger>(m, "NYUFinger")
         .def(py::init<>())
-        .def("initialize", &NYUFinger::initialize,  py::arg("interface_name"))
+        .def("initialize", &NYUFinger::initialize, py::arg("interface_name"))
         .def("acquire_sensors", &NYUFinger::acquire_sensors)
         .def("send_target_joint_torque",
              &NYUFinger::send_target_joint_torque,
              py::arg("target_joint_torque"))
-        .def("set_max_joint_torques",
-             &NYUFinger::set_max_joint_torques,
-             py::arg("max_joint_torques"))
+        .def("set_max_current",
+             &NYUFinger::set_max_current,
+             py::arg("max_current"))
         .def("get_motor_board_errors", &NYUFinger::get_motor_board_errors)
         .def("get_motor_board_enabled", &NYUFinger::get_motor_board_enabled)
         .def("get_motor_enabled", &NYUFinger::get_motor_enabled)

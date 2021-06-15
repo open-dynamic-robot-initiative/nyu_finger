@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <odri_control_interface/calibration.hpp>
+#include <odri_control_interface/robot.hpp>
 #include <odri_control_interface/common.hpp>
 
 namespace nyu_finger
@@ -41,9 +43,9 @@ public:
     void initialize(const std::string &network_id);
 
     /**
-     * @brief Sets the maximum joint torques.
+     * @brief Sets the maximum motor current.
      */
-    void set_max_joint_torques(const double& max_joint_torques);
+    void set_max_current(const double& max_current);
 
     /**
      * @brief send_target_torques sends the target currents to the motors.
