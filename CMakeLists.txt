@@ -40,49 +40,10 @@ find_package(dynamic_graph_manager QUIET)
 # Declare a simple macro to build the library #
 ###############################################
 
-macro(create_robots_library lib_name)
-  add_library(${lib_name} SHARED
-    src/${lib_name}.cpp
-  )
-
-  target_link_libraries(${PROJECT_NAME} blmc_drivers::blmc_drivers)
-  target_link_libraries(${PROJECT_NAME}
-                        odri_control_interface::odri_control_interface)
-  target_link_libraries(${PROJECT_NAME}
-                        master_board_sdk::master_board_sdk)
-  target_link_libraries(${PROJECT_NAME}
-                        real_time_tools::real_time_tools)
-  target_link_libraries(${PROJECT_NAME} yaml_utils::yaml_utils)
-  target_link_libraries(${PROJECT_NAME} Eigen3::Eigen)
-
-  if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    target_link_libraries(${lib_name} rt pthread)
-  endif()
-
-  # Includes. Add the include dependencies
-  target_include_directories(
-    ${lib_name} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-                       $<INSTALL_INTERFACE:include>)
-endmacro()
-
 #
-# build the Robots #
+# manage the creation of the libraries and executables
 #
-
-create_robots_library(nyu_finger)
-
-# command to install the library and binaries
-install(
-  TARGETS nyu_finger
-  EXPORT ${PROJECT_NAME}Targets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-  INCLUDES
-  DESTINATION include)
-
-# we also need to install the header files
-install(DIRECTORY include/ DESTINATION include)
+add_subdirectory(src)
 
 #
 # Python bindings

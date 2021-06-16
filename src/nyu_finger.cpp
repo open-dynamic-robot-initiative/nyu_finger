@@ -163,7 +163,7 @@ void NYUFinger::set_max_current(const double& max_current)
 void NYUFinger::send_target_joint_torque(
     const Eigen::Ref<Vector3d> target_joint_torque)
 {
-robot_->joints->SetTorques(target_joint_torque);
+    robot_->joints->SetTorques(target_joint_torque);
 
     switch (state_)
     {
