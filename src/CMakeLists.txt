@@ -26,7 +26,7 @@ macro(create_robots_library lib_name)
 
   # Includes. Add the include dependencies
   target_include_directories(
-    ${lib_name} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    ${lib_name} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
                       $<INSTALL_INTERFACE:include>)
 
   list(APPEND all_src_targets ${lib_name})
@@ -76,7 +76,7 @@ endif(${dynamic_graph_manager_FOUND})
 #
 install(
   TARGETS ${all_src_targets}
-  EXPORT export_${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}Targets
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
@@ -84,7 +84,7 @@ install(
   DESTINATION include)
 
 # we also need to install the header files
-install(DIRECTORY include/ DESTINATION include)
+install(DIRECTORY ../include/ DESTINATION include)
 
 foreach(target ${all_exe_targets})
   # install a symlink of the executable in lib/bolt
