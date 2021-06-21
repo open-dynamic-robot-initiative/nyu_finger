@@ -26,7 +26,7 @@ macro(create_robots_library lib_name)
 
   # Includes. Add the include dependencies
   target_include_directories(
-    ${lib_name} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
+    ${lib_name} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                       $<INSTALL_INTERFACE:include>)
 
   list(APPEND all_src_targets ${lib_name})
@@ -49,13 +49,14 @@ if(${dynamic_graph_manager_FOUND})
       dynamic_graph_manager/dgm_${robot_name}.cpp
       dynamic_graph_manager/dg_main_${robot_name}.cpp
     )
+
     # Add the include dependencies.
     target_include_directories(
       dg_main_${robot_name} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                             $<INSTALL_INTERFACE:include>)
     # Link the dependencies.
     target_link_libraries(dg_main_${robot_name}
-      ${robot_name} dynamic_graph_manager::dynamic_graph_manager)
+      nyu_finger dynamic_graph_manager::dynamic_graph_manager)
     # Get the yaml configuration for the DGM.
     string(
     CONCAT dgm_yaml_path

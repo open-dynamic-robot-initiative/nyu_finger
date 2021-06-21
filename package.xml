@@ -14,6 +14,7 @@
   <depend>master_board_sdk_catkin</depend>
   <depend>real_time_tools</depend>
   <depend>mpi_cmake_modules</depend>
+  <depend>odri_control_interface</depend>
   <depend>pybind11_catkin</depend>
   <depend>yaml_cpp_catkin</depend>
   <depend>eigen</depend>

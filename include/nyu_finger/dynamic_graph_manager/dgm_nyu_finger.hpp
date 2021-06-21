@@ -83,7 +83,7 @@ private:
      * the next positive angle.
      */
     void calibrate_joint_position(
-        const solo::Vector3d& zero_to_index_angle);
+        const nyu_finger::Vector3d& zero_to_index_angle);
 
     /**
      * Entries for the real hardware.
