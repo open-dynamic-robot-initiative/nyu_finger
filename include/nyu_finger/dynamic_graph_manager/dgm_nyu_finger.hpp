@@ -10,12 +10,13 @@
 
 #include "nyu_finger/nyu_finger.hpp"
 #include "mim_msgs/srv/joint_calibration.hpp"
-#include "dynamic_graph_manager/dynamic_graph_manager.hpp"
+// #include "dynamic_graph_manager/dynamic_graph_manager.hpp"
+#include "dynamic_graph_manager/hardware_process.hpp"
 #include "yaml_utils/yaml_cpp_fwd.hpp"
 
 namespace nyu_finger
 {
-class DGMNYUFinger : public dynamic_graph_manager::DynamicGraphManager
+class DGMNYUFinger : public dynamic_graph_manager::HardwareProcess
 {
 public:
     /**
@@ -35,10 +36,10 @@ public:
     bool is_in_safety_mode();
 
     /**
-     * @brief initialize_hardware_communication_process is the function that
+     * @brief initialize_drivers is the function that
      * initialize the hardware.
      */
-    void initialize_hardware_communication_process();
+    void initialize_drivers();
 
     /**
      * @brief get_sensors_to_map acquieres the sensors data and feed it to the

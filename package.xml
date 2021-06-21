@@ -9,8 +9,6 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>blmc_drivers</depend>
-  <depend>blmc_robots</depend>
   <depend>master_board_sdk_catkin</depend>
   <depend>real_time_tools</depend>
   <depend>mpi_cmake_modules</depend>

@@ -40,7 +40,7 @@ public:
      * the sensors to 0.
      * @param if_name Interface for connection to hardware.
      */
-    void initialize(const std::string &network_id);
+    void initialize(const std::string &network_id, const Vector3d& motor_numbers);
 
     /**
      * @brief Sets the maximum motor current.

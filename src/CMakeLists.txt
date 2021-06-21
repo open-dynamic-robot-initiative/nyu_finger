@@ -10,7 +10,6 @@ macro(create_robots_library lib_name)
     ${lib_name}.cpp
   )
 
-  target_link_libraries(${PROJECT_NAME} blmc_drivers::blmc_drivers)
   target_link_libraries(${PROJECT_NAME}
                         odri_control_interface::odri_control_interface)
   target_link_libraries(${PROJECT_NAME}
@@ -69,7 +68,7 @@ if(${dynamic_graph_manager_FOUND})
     list(APPEND all_exe_targets dg_main_${robot_name})
   endmacro()
   build_dgm_programs(nyu_finger)
-  build_dgm_programs(nyu_finger_double)
+  # build_dgm_programs(nyu_finger_double)
 endif(${dynamic_graph_manager_FOUND})
 
 #

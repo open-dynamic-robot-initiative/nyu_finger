@@ -22,17 +22,17 @@ int main(int argc, char* argv[])
 
     // Get the dynamic_graph_manager config file.
     std::ostringstream robot_properties_yaml_path;
-    robot_properties_yaml_path << ROBOT_PROPERTIES_YAML_PATH
-                               << "/"
-                               << yaml_file_name;
+    // robot_properties_yaml_path << ROBOT_PROPERTIES_YAML_PATH
+    //                            << "/"
+    //                            << yaml_file_name;
+    robot_properties_yaml_path << yaml_file_name;
     std::cout << "Loading paramters from " << robot_properties_yaml_path.str() << std::endl;
-    YAML::Node param = YAML::LoadFile(robot_properties_yaml_path.str());
 
     // Create the dgm.
     nyu_finger::DGMNYUFinger dgm;
 
     // Initialize and run it.
-    dgm.initialize(param);
+    dgm.initialize(robot_properties_yaml_path.str());
     dgm.run();
 
     // Wait until ROS is shutdown.

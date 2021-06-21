@@ -21,7 +21,7 @@ DGMNYUFinger::~DGMNYUFinger()
 {
 }
 
-void DGMNYUFinger::initialize_hardware_communication_process()
+void DGMNYUFinger::initialize_drivers()
 {
     /**
      * Load the calibration parameters.
@@ -33,8 +33,7 @@ void DGMNYUFinger::initialize_hardware_communication_process()
 
     // Get the hardware communication ros node handle.
     dynamic_graph_manager::RosNodePtr ros_node_handle =
-        dynamic_graph_manager::get_ros_node(
-            dynamic_graph_manager::HWC_ROS_NODE_NAME);
+        dynamic_graph_manager::get_ros_node(com_ros_node_name_);
 
     /** Initialize the user commands. */
     ros_user_commands_.push_back(
@@ -49,7 +48,12 @@ void DGMNYUFinger::initialize_hardware_communication_process()
     YAML::ReadParameter(
         params_["hardware_communication"], "network_id", network_id);
 
-    nyu_finger_.initialize(network_id, serial_port);
+    nyu_finger::Vector3d motor_numbers;
+    YAML::ReadParameter(params_["hardware_communication"],
+                        "motor_numbers",
+                         motor_numbers);
+
+    nyu_finger_.initialize(network_id, motor_numbers);
 }
 
 bool DGMNYUFinger::is_in_safety_mode()
@@ -64,7 +68,7 @@ bool DGMNYUFinger::is_in_safety_mode()
       counter += 1;
     }
 
-    if (was_in_safety_mode_ || DynamicGraphManager::is_in_safety_mode())
+    if (was_in_safety_mode_)
     {
       static int counter = 0;
       was_in_safety_mode_ = true;
@@ -108,6 +112,7 @@ void DGMNYUFinger::get_sensors_to_map(dynamic_graph_manager::VectorDGMap& map)
     map.at("joint_torques") = nyu_finger_.get_joint_torques();
     map.at("joint_target_torques") = nyu_finger_.get_joint_target_torques();
     map.at("joint_encoder_index") = nyu_finger_.get_joint_encoder_index();
+
     /**
      * Robot status.
      */
@@ -172,7 +177,7 @@ void DGMNYUFinger::calibrate_joint_position_callback(
 void DGMNYUFinger::calibrate_joint_position(
     const nyu_finger::Vector3d& zero_to_index_angle)
 {
-    nyu_finger_.request_calibration(zero_to_index_angle);
+    nyu_finger_.calibrate(zero_to_index_angle);
 }
 
 }  // namespace solo

@@ -24,7 +24,6 @@ find_package(Eigen3 REQUIRED)
 
 # local depends
 find_package(mpi_cmake_modules REQUIRED)
-find_package(blmc_drivers REQUIRED)
 find_package(odri_control_interface REQUIRED)
 find_package(master_board_sdk REQUIRED)
 find_package(real_time_tools REQUIRED)

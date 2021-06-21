@@ -28,7 +28,7 @@ PYBIND11_MODULE(py_nyu_finger, m)
 {
     py::class_<NYUFinger>(m, "NYUFinger")
         .def(py::init<>())
-        .def("initialize", &NYUFinger::initialize, py::arg("interface_name"))
+        .def("initialize", &NYUFinger::initialize, py::arg("interface_name"), py::arg("motor_numbers"))
         .def("acquire_sensors", &NYUFinger::acquire_sensors)
         .def("send_target_joint_torque",
              &NYUFinger::send_target_joint_torque,
