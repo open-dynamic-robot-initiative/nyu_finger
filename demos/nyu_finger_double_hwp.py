@@ -17,6 +17,6 @@ if __name__ == "__main__":
     input("Press enter to start calibration.")
 
     # TODO: Read these from the yaml file.
-    calibration_offsets = np.zeros(3)
-    finger0.calibration(calibration_offsets)
-    finger1.calibration(calibration_offsets)
+    # calibration_offsets = np.zeros(3)
+    # finger0.calibrate(calibration_offsets)
+    # finger1.calibrate(calibration_offsets)
