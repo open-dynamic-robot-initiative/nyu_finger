@@ -22,10 +22,9 @@ int main(int argc, char* argv[])
 
     // Get the dynamic_graph_manager config file.
     std::ostringstream robot_properties_yaml_path;
-    // robot_properties_yaml_path << ROBOT_PROPERTIES_YAML_PATH
-    //                            << "/"
-    //                            << yaml_file_name;
-    robot_properties_yaml_path << yaml_file_name;
+    robot_properties_yaml_path << ROBOT_PROPERTIES_YAML_PATH
+                               << "/"
+                               << yaml_file_name;
     std::cout << "Loading paramters from " << robot_properties_yaml_path.str() << std::endl;
 
     // Create the dgm.

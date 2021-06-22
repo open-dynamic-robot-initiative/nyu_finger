@@ -29,18 +29,16 @@ find_package(master_board_sdk REQUIRED)
 find_package(real_time_tools REQUIRED)
 find_package(yaml_utils REQUIRED)
 
-#
-# Build main library and binaries
-#
+# Find resources from robot_properties packages.
+find_package(PythonModules COMPONENTS robot_properties_nyu_finger)
 
+#
+# Optional dependency on dynamic graph manager.
+#
 find_package(dynamic_graph_manager QUIET)
 
-###############################################
-# Declare a simple macro to build the library #
-###############################################
-
 #
-# manage the creation of the libraries and executables
+# Manage the creation of the libraries and executables.
 #
 add_subdirectory(src)
 
@@ -54,6 +52,7 @@ set(py_nyu_finger_SRC_FILES
 pybind11_add_module(py_nyu_finger MODULE ${py_nyu_finger_SRC_FILES})
 target_link_libraries(py_nyu_finger PRIVATE pybind11::module)
 target_link_libraries(py_nyu_finger PRIVATE nyu_finger)
+
 
 # install the bindings
 get_python_install_dir(python_install_dir)

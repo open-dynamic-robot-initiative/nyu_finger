@@ -60,7 +60,7 @@ if(${dynamic_graph_manager_FOUND})
     string(
     CONCAT dgm_yaml_path
          "${PythonModules_robot_properties_nyu_finger_PATH}/"
-         "robot_properties_nyu_finger/robot_properties_nyu_finger/dynamic_graph_manager/")
+         "robot_properties_nyu_finger/robot_properties_nyu_finger/dynamic_graph_manager")
     target_compile_definitions(dg_main_${robot_name}
       PUBLIC ROBOT_PROPERTIES_YAML_PATH="${dgm_yaml_path}")
     # Export the target.

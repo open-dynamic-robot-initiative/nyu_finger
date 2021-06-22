@@ -12,5 +12,6 @@ find_dependency(master_board_sdk REQUIRED)
 find_dependency(real_time_tools REQUIRED)
 find_dependency(yaml_utils REQUIRED)
 find_dependency(dynamic_graph_manager QUIET)
+find_dependency(PythonModules COMPONENTS robot_properties_nyu_finger)
 
 check_required_components(nyu_finger)
