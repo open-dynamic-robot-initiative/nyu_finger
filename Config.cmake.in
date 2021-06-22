@@ -11,5 +11,6 @@ find_dependency(odri_control_interface REQUIRED)
 find_dependency(master_board_sdk REQUIRED)
 find_dependency(real_time_tools REQUIRED)
 find_dependency(yaml_utils REQUIRED)
+find_dependency(dynamic_graph_manager QUIET)
 
 check_required_components(nyu_finger)

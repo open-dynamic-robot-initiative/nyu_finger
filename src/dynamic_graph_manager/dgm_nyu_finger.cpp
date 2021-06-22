@@ -63,18 +63,18 @@ bool DGMNYUFinger::is_in_safety_mode()
       was_in_safety_mode_ = true;
       static int counter = 0;
       if (counter % 2000 == 0) {
-        printf("DGMSolo12: Going into safe mode as error was reported.\n");
+        printf("DGMNYUFinger: Going into safe mode as error was reported.\n");
       }
       counter += 1;
     }
 
-    if (was_in_safety_mode_)
+    if (was_in_safety_mode_ || HardwareProcess::is_in_safety_mode())
     {
       static int counter = 0;
       was_in_safety_mode_ = true;
       if (counter % 2000 == 0)
       {
-        printf("DGMSolo12: is_in_safety_mode.\n");
+        printf("DGMNYUFinger: is_in_safety_mode.\n");
       }
       counter++;
     }
