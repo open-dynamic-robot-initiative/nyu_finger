@@ -148,8 +148,19 @@ void DGMNYUFinger::set_motor_controls_from_map(
         // Here we need to perform and internal copy. Otherwise the compilator
         // complains.
         ctrl_joint_torques_ = map.at("ctrl_joint_torques");
-        // Actually send the control to the robot.
         nyu_finger_.send_target_joint_torque(ctrl_joint_torques_);
+
+        auto ctrl_joint_positions = map.at("ctrl_joint_positions");
+        nyu_finger_.send_target_joint_position(ctrl_joint_positions);
+
+        auto ctrl_joint_velocities = map.at("ctrl_joint_velocities");
+        nyu_finger_.send_target_joint_velocity(ctrl_joint_velocities);
+
+        auto joint_position_gains = map.at("ctrl_joint_position_gains");
+        nyu_finger_.send_target_joint_position_gains(joint_position_gains);
+
+        auto joint_velocity_gains = map.at("ctrl_joint_velocity_gains");
+        nyu_finger_.send_target_joint_velocity_gains(joint_velocity_gains);
     }
     catch (const std::exception& e)
     {

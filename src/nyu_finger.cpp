@@ -205,6 +205,30 @@ void NYUFinger::send_target_joint_torque(
     }
 }
 
+void NYUFinger::send_target_joint_position(
+    const Eigen::Ref<Vector3d> target_joint_position)
+{
+    robot_->joints->SetDesiredPositions(target_joint_position);
+}
+
+void NYUFinger::send_target_joint_velocity(
+        const Eigen::Ref<Vector3d> target_joint_velocity)
+{
+    robot_->joints->SetDesiredVelocities(target_joint_velocity);
+}
+
+void NYUFinger::send_target_joint_position_gains(
+    const Eigen::Ref<Vector3d> target_joint_position_gains)
+{
+    robot_->joints->SetPositionGains(target_joint_position_gains);
+}
+
+void NYUFinger::send_target_joint_velocity_gains(
+    const Eigen::Ref<Vector3d> target_joint_velocity_gains)
+{
+    robot_->joints->SetVelocityGains(target_joint_velocity_gains);
+}
+
 bool NYUFinger::calibrate(const Vector3d& home_offset_rad)
 {
     printf("NYUFinger::request_calibration called\n");

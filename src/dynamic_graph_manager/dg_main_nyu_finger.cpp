@@ -38,5 +38,4 @@ int main(int argc, char* argv[])
     std::cout << "Wait for shutdown, press CTRL+C to close." << std::endl;
     dynamic_graph_manager::ros_spin();
     dynamic_graph_manager::ros_shutdown();
-
 }
