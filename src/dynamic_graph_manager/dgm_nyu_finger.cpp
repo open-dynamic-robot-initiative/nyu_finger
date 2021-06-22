@@ -186,7 +186,7 @@ void DGMNYUFinger::calibrate_joint_position_callback(
 }
 
 void DGMNYUFinger::calibrate_joint_position(
-    const nyu_finger::Vector3d& zero_to_index_angle)
+    Eigen::Ref<nyu_finger::Vector3d> zero_to_index_angle)
 {
     nyu_finger_.calibrate(zero_to_index_angle);
 }

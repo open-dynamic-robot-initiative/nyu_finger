@@ -34,8 +34,6 @@ int main(int argc, char* argv[])
     dgm.initialize(robot_properties_yaml_path.str());
     dgm.run();
 
-    // Wait until ROS is shutdown.
-    std::cout << "Wait for shutdown, press CTRL+C to close." << std::endl;
-    dynamic_graph_manager::ros_spin();
-    dynamic_graph_manager::ros_shutdown();
+    // Spin ROS and wait till it is shutdown.
+    dgm.spin_ros();
 }

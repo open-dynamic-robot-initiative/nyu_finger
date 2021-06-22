@@ -71,21 +71,21 @@ public:
         mim_msgs::srv::JointCalibration::Response::SharedPtr res);
 
     /**
-     * @brief compute_safety_controls computes safety controls very fast in case
-     * the dynamic graph is taking to much computation time or has crashed.
-     */
-    void compute_safety_controls();
-
-private:
-    /**
      * @brief Calibrate the robot joint position
      *
      * @param zero_to_index_angle is the angle between the theoretical zero and
      * the next positive angle.
      */
     void calibrate_joint_position(
-        const nyu_finger::Vector3d& zero_to_index_angle);
+        Eigen::Ref<nyu_finger::Vector3d> zero_to_index_angle);
 
+    /**
+     * @brief compute_safety_controls computes safety controls very fast in case
+     * the dynamic graph is taking to much computation time or has crashed.
+     */
+    void compute_safety_controls();
+
+private:
     /**
      * Entries for the real hardware.
      */

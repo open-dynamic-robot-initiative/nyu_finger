@@ -53,10 +53,25 @@ pybind11_add_module(py_nyu_finger MODULE ${py_nyu_finger_SRC_FILES})
 target_link_libraries(py_nyu_finger PRIVATE pybind11::module)
 target_link_libraries(py_nyu_finger PRIVATE nyu_finger)
 
-
 # install the bindings
 get_python_install_dir(python_install_dir)
 install(TARGETS py_nyu_finger DESTINATION ${python_install_dir}/${PROJECT_NAME})
+
+# If dynamic graph manager was found, then build the hardware process bindings.
+if(${dynamic_graph_manager_FOUND})
+  set(nyu_finger_hwp_SRC_FILES
+    src/nyu_finger.cpp
+    src/dynamic_graph_manager/dgm_nyu_finger.cpp
+    srcpy/nyu_finger_hwp.cpp
+  )
+  pybind11_add_module(nyu_finger_hwp_cpp MODULE ${nyu_finger_hwp_SRC_FILES})
+  target_link_libraries(nyu_finger_hwp_cpp PRIVATE pybind11::module)
+  target_link_libraries(nyu_finger_hwp_cpp PRIVATE nyu_finger)
+  target_link_libraries(nyu_finger_hwp_cpp PRIVATE dynamic_graph_manager::dynamic_graph_manager)
+
+  install(TARGETS nyu_finger_hwp_cpp DESTINATION ${python_install_dir}/${PROJECT_NAME})
+endif(${dynamic_graph_manager_FOUND})
+
 
 # install the python package too
 install(
