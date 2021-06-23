@@ -9,12 +9,10 @@ if __name__ == "__main__":
     finger0 = NYUFingerHWP()
     finger1 = NYUFingerHWP()
 
-    yaml_path_dir =
-
     finger0.initialize(os.path.join(
-        yaml_path_dir, 'dgm_parameters_nyu_finger_double_0.yaml'))
+        NYUFingerConfig.dgm_yaml_dir, 'dgm_parameters_nyu_finger_double_0.yaml'))
     finger1.initialize(os.path.join(
-        yaml_path_dir, 'dgm_parameters_nyu_finger_double_1.yaml'))
+        NYUFingerConfig.dgm_yaml_dir, 'dgm_parameters_nyu_finger_double_1.yaml'))
 
     finger0.run()
     finger1.run()
