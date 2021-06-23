@@ -41,7 +41,7 @@ NYUFinger::NYUFinger()
     }
     for(unsigned i = 0; i < motor_board_enabled_.size(); ++i)
     {
-	    motor_board_enabled_[i] = false;
+        motor_board_enabled_[i] = false;
         motor_board_errors_[i] = 0;
     }
 
