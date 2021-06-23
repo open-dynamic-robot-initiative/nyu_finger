@@ -1,3 +1,12 @@
+/**
+ * \file nyu_finger.cpp
+ * \brief The NYUFinger driver class implementation.
+ * \author Julian Viereck, Huaijiang Zhu
+ * \date June 15, 2021
+ *
+ * This file defines the NYUFinger class.
+ */
+
 #include <cmath>
 #include <memory>
 
@@ -64,10 +73,10 @@ void NYUFinger::initialize(const std::string &network_id, const Vector3d& motor_
 
     main_board_ptr_ = std::make_shared<MasterBoardInterface>(network_id_);
 
-    VectorXi motor_numbers_(3);
-    motor_numbers_(0) = int(motor_numbers(0));
-    motor_numbers_(1) = int(motor_numbers(1));
-    motor_numbers_(2) = int(motor_numbers(2));
+    VectorXi motor_numbers_int(3);
+    motor_numbers_int(0) = int(motor_numbers(0));
+    motor_numbers_int(1) = int(motor_numbers(1));
+    motor_numbers_int(2) = int(motor_numbers(2));
     VectorXb motor_reversed(3);
     motor_reversed << false, false, false;
 
@@ -83,7 +92,7 @@ void NYUFinger::initialize(const std::string &network_id, const Vector3d& motor_
     // Define the joint module.
     joints_ = std::make_shared<odri_control_interface::JointModules>(
         main_board_ptr_,
-        motor_numbers_,
+        motor_numbers_int,
         motor_torque_constants_(0),
         joint_gear_ratios_(0),
         motor_max_current_(0),

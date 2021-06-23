@@ -150,17 +150,17 @@ void DGMNYUFinger::set_motor_controls_from_map(
         ctrl_joint_torques_ = map.at("ctrl_joint_torques");
         nyu_finger_.send_target_joint_torque(ctrl_joint_torques_);
 
-        auto ctrl_joint_positions = map.at("ctrl_joint_positions");
-        nyu_finger_.send_target_joint_position(ctrl_joint_positions);
+        ctrl_joint_positions_ = map.at("ctrl_joint_positions");
+        nyu_finger_.send_target_joint_position(ctrl_joint_positions_);
 
-        auto ctrl_joint_velocities = map.at("ctrl_joint_velocities");
-        nyu_finger_.send_target_joint_velocity(ctrl_joint_velocities);
+        ctrl_joint_velocities_ = map.at("ctrl_joint_velocities");
+        nyu_finger_.send_target_joint_velocity(ctrl_joint_velocities_);
 
-        auto joint_position_gains = map.at("ctrl_joint_position_gains");
-        nyu_finger_.send_target_joint_position_gains(joint_position_gains);
+        joint_position_gains_ = map.at("ctrl_joint_position_gains");
+        nyu_finger_.send_target_joint_position_gains(joint_position_gains_);
 
-        auto joint_velocity_gains = map.at("ctrl_joint_velocity_gains");
-        nyu_finger_.send_target_joint_velocity_gains(joint_velocity_gains);
+        joint_velocity_gains_ = map.at("ctrl_joint_velocity_gains");
+        nyu_finger_.send_target_joint_velocity_gains(joint_velocity_gains_);
     }
     catch (const std::exception& e)
     {
@@ -189,6 +189,15 @@ void DGMNYUFinger::calibrate_joint_position(
     Eigen::Ref<nyu_finger::Vector3d> zero_to_index_angle)
 {
     nyu_finger_.calibrate(zero_to_index_angle);
+}
+
+void DGMNYUFinger::calibrate_joint_position_from_yaml()
+{
+    nyu_finger::Vector3d joint_index_to_zero;
+    YAML::ReadParameter(params_["hardware_communication"]["calibration"],
+                        "index_to_zero_angle",
+                        joint_index_to_zero);
+    nyu_finger_.calibrate(joint_index_to_zero);
 }
 
 }  // namespace solo

@@ -68,7 +68,6 @@ if(${dynamic_graph_manager_FOUND})
     list(APPEND all_exe_targets dg_main_${robot_name})
   endmacro()
   build_dgm_programs(nyu_finger)
-  # build_dgm_programs(nyu_finger_double)
 endif(${dynamic_graph_manager_FOUND})
 
 #

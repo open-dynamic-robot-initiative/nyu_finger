@@ -10,7 +10,6 @@
 
 #include "nyu_finger/nyu_finger.hpp"
 #include "mim_msgs/srv/joint_calibration.hpp"
-// #include "dynamic_graph_manager/dynamic_graph_manager.hpp"
 #include "dynamic_graph_manager/hardware_process.hpp"
 #include "yaml_utils/yaml_cpp_fwd.hpp"
 
@@ -39,7 +38,7 @@ public:
      * @brief initialize_drivers is the function that
      * initialize the hardware.
      */
-    void initialize_drivers();
+    virtual void initialize_drivers();
 
     /**
      * @brief get_sensors_to_map acquieres the sensors data and feed it to the
@@ -80,6 +79,11 @@ public:
         Eigen::Ref<nyu_finger::Vector3d> zero_to_index_angle);
 
     /**
+     * @brief Calibrates the joints using the calibration data from the yaml file.
+     */
+    void calibrate_joint_position_from_yaml();
+
+    /**
      * @brief compute_safety_controls computes safety controls very fast in case
      * the dynamic graph is taking to much computation time or has crashed.
      */
@@ -101,6 +105,30 @@ private:
      * to send this copy to the solo::Solo class
      */
     nyu_finger::Vector3d ctrl_joint_torques_;
+
+    /**
+     * @brief ctrl_joint_positions_ the desired joint position for the PD
+     * controller running on the udriver board.
+     */
+    nyu_finger::Vector3d ctrl_joint_positions_;
+
+    /**
+     * @brief ctrl_joint_velocities_ the desired joint velocity for the PD
+     * controller running on the udriver board.
+     */
+    nyu_finger::Vector3d ctrl_joint_velocities_;
+
+    /**
+     * @brief joint_position_gains_ the P gains for the PD controller running
+     * on the udriver board.
+     */
+    nyu_finger::Vector3d joint_position_gains_;
+
+    /**
+     * @brief ctrl_joint_torques_ the D gains for the PD controller running
+     * on the udriver board.
+     */
+    nyu_finger::Vector3d joint_velocity_gains_;
 
     /**
      * @brief Check if we entered once in the safety mode and stay there if so

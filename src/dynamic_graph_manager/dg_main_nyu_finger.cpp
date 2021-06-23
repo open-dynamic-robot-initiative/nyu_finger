@@ -1,10 +1,11 @@
 /**
- * \file solo.cpp
- * \brief Execute the main program to control the solo
- * \author Maximilien Naveau
- * \date 2018
+ * \file dg_main_nyu_finger.cpp
+ * \brief Execute the main program to control the nyu finger robot.
+ * \author Julian Viereck
+ * \date June 22, 2021
  *
- * This file uses the TestBench8Motors class in a small demo.
+ * This file is the main executable to launch the hardware process for the
+ * finger robot platform.
  */
 
 #include <sstream>

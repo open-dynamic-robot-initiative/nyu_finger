@@ -34,6 +34,7 @@ PYBIND11_MODULE(nyu_finger_hwp_cpp, m)
         .def(py::init<>())
         .def("initialize", &DGMNYUFinger::initialize)
         .def("calibrate", &DGMNYUFinger::calibrate_joint_position)
+        .def("calibrate_from_yaml", &DGMNYUFinger::calibrate_joint_position_from_yaml)
         .def("run", &DGMNYUFinger::run)
     ;
 }

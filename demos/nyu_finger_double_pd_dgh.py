@@ -4,11 +4,14 @@ import time
 
 import dynamic_graph_manager_cpp_bindings
 
-# Create the dgm communication to the control process.
-yaml_file = '/home/jviereck/dev/dgm_refactoring/workspace/src/robot_properties_nyu_finger/src/robot_properties_nyu_finger/robot_properties_nyu_finger/dynamic_graph_manager/dgm_parameters_nyu_finger_double_0.yaml'
-head0 = dynamic_graph_manager_cpp_bindings.DGMHead(yaml_file)
+# Specify the setup through a yaml file.
+yaml_file_0 = os.path.join(
+    NYUFingerConfig.dgm_yaml_dir, 'dgm_parameters_nyu_finger_double_0.yaml')
+yaml_file_0 = os.path.join(
+    NYUFingerConfig.dgm_yaml_dir, 'dgm_parameters_nyu_finger_double_1.yaml')
 
-yaml_file = '/home/jviereck/dev/dgm_refactoring/workspace/src/robot_properties_nyu_finger/src/robot_properties_nyu_finger/robot_properties_nyu_finger/dynamic_graph_manager/dgm_parameters_nyu_finger_double_1.yaml'
+# Create the dgm communication to the control process.
+head0 = dynamic_graph_manager_cpp_bindings.DGMHead(yaml_file)
 head1 = dynamic_graph_manager_cpp_bindings.DGMHead(yaml_file)
 
 P = 3.

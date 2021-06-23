@@ -46,7 +46,6 @@ add_subdirectory(src)
 # Python bindings
 #
 set(py_nyu_finger_SRC_FILES
-  src/nyu_finger.cpp
   srcpy/py_nyu_finger.cpp
 )
 pybind11_add_module(py_nyu_finger MODULE ${py_nyu_finger_SRC_FILES})
@@ -60,7 +59,6 @@ install(TARGETS py_nyu_finger DESTINATION ${python_install_dir}/${PROJECT_NAME})
 # If dynamic graph manager was found, then build the hardware process bindings.
 if(${dynamic_graph_manager_FOUND})
   set(nyu_finger_hwp_SRC_FILES
-    src/nyu_finger.cpp
     src/dynamic_graph_manager/dgm_nyu_finger.cpp
     srcpy/nyu_finger_hwp.cpp
   )
