@@ -8,8 +8,16 @@
  * finger robot platform.
  */
 
+#include <cstdlib>
+#include <signal.h>
 #include <sstream>
 #include "nyu_finger/dynamic_graph_manager/dgm_nyu_finger.hpp"
+
+bool running = true;
+
+void signal_callback_handler(int signum) {
+   running = false;
+}
 
 int main(int argc, char* argv[])
 {
@@ -35,6 +43,11 @@ int main(int argc, char* argv[])
     dgm.initialize(robot_properties_yaml_path.str());
     dgm.run();
 
-    // Spin ROS and wait till it is shutdown.
-    dgm.spin_ros();
+    // Register signal and signal handler
+    signal(SIGINT, signal_callback_handler);
+
+    while (running)
+    {
+        sleep(0.1);
+    }
 }

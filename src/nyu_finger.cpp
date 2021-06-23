@@ -65,6 +65,7 @@ NYUFinger::NYUFinger()
     joint_gear_ratios_.fill(9.0);
 
     state_ = NYUFingerState::initial;
+    calibrate_request_ = false;
 }
 
 void NYUFinger::initialize(const std::string &network_id, const Vector3d& motor_numbers)
