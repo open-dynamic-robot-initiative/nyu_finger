@@ -53,6 +53,8 @@ void DGMNYUFinger::initialize_drivers()
                         "motor_numbers",
                          motor_numbers);
 
+    std::cout << params_["hardware_communication"] << std::endl;
+
     nyu_finger_.initialize(network_id, motor_numbers);
 }
 
@@ -193,11 +195,7 @@ void DGMNYUFinger::calibrate_joint_position(
 
 void DGMNYUFinger::calibrate_joint_position_from_yaml()
 {
-    nyu_finger::Vector3d joint_index_to_zero;
-    YAML::ReadParameter(params_["hardware_communication"]["calibration"],
-                        "index_to_zero_angle",
-                        joint_index_to_zero);
-    nyu_finger_.calibrate(joint_index_to_zero);
+    nyu_finger_.calibrate(zero_to_index_angle_from_file_);
 }
 
 }  // namespace solo
