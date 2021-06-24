@@ -11,8 +11,9 @@ yaml_file = os.path.join(NYUFingerConfig.dgm_yaml_dir, 'dgm_parameters_nyu_finge
 # Create the dgm communication to the control process.
 head = dynamic_graph_manager_cpp_bindings.DGMHead(yaml_file)
 
-P = 3.
-D = 0.05
+P = 3 * np.ones(3)
+D = 0.2 * np.ones(3)
+target = np.zeros(3)
 dt = 0.001
 next_time = time.time() + dt
 do_control = True
@@ -31,9 +32,14 @@ while (do_control):
         head.read()
 
         ###
-        # A very simple example PD controller around the origin
-        tau = -P * joint_positions + -D * joint_velocities
-        head.set_control('ctrl_joint_torques', tau)
+        # Set PD target position and velocity.
+        head.set_control('ctrl_joint_positions', target)
+        head.set_control('ctrl_joint_velocities', target)
+
+        ###
+        # Set the P and D gains.
+        head.set_control('ctrl_joint_position_gains', P)
+        head.set_control('ctrl_joint_velocity_gains', D)
 
         ###
         # Write the results into shared memory again.
