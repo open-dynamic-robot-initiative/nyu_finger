@@ -24,62 +24,28 @@ find_package(Eigen3 REQUIRED)
 
 # local depends
 find_package(mpi_cmake_modules REQUIRED)
-find_package(blmc_drivers REQUIRED)
-find_package(blmc_robots REQUIRED)
+find_package(odri_control_interface REQUIRED)
+find_package(master_board_sdk REQUIRED)
 find_package(real_time_tools REQUIRED)
+find_package(yaml_utils REQUIRED)
+
+# Find resources from robot_properties packages.
+find_package(PythonModules COMPONENTS robot_properties_nyu_finger)
 
 #
-# Build main library and binaries
+# Optional dependency on dynamic graph manager.
 #
-
-###############################################
-# Declare a simple macro to build the library #
-###############################################
-
-macro(create_robots_library lib_name)
-  add_library(${lib_name} SHARED
-    src/${lib_name}.cpp
-  )
-
-  target_link_libraries(${lib_name} Eigen3::Eigen)
-  target_link_libraries(${lib_name} blmc_drivers::blmc_drivers)
-  target_link_libraries(${lib_name} blmc_robots::blmc_robots)
-  target_link_libraries(${lib_name} real_time_tools::real_time_tools)
-
-  if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    target_link_libraries(${lib_name} rt pthread)
-  endif()
-
-  # Includes. Add the include dependencies
-  target_include_directories(
-    ${lib_name} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-                       $<INSTALL_INTERFACE:include>)
-endmacro()
+find_package(dynamic_graph_manager QUIET)
 
 #
-# build the Robots #
+# Manage the creation of the libraries and executables.
 #
-
-create_robots_library(nyu_finger)
-
-# command to install the library and binaries
-install(
-  TARGETS nyu_finger
-  EXPORT ${PROJECT_NAME}Targets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-  INCLUDES
-  DESTINATION include)
-
-# we also need to install the header files
-install(DIRECTORY include/ DESTINATION include)
+add_subdirectory(src)
 
 #
 # Python bindings
 #
 set(py_nyu_finger_SRC_FILES
-  src/nyu_finger.cpp
   srcpy/py_nyu_finger.cpp
 )
 pybind11_add_module(py_nyu_finger MODULE ${py_nyu_finger_SRC_FILES})
@@ -89,6 +55,21 @@ target_link_libraries(py_nyu_finger PRIVATE nyu_finger)
 # install the bindings
 get_python_install_dir(python_install_dir)
 install(TARGETS py_nyu_finger DESTINATION ${python_install_dir}/${PROJECT_NAME})
+
+# If dynamic graph manager was found, then build the hardware process bindings.
+if(${dynamic_graph_manager_FOUND})
+  set(nyu_finger_hwp_SRC_FILES
+    src/dynamic_graph_manager/dgm_nyu_finger.cpp
+    srcpy/nyu_finger_hwp.cpp
+  )
+  pybind11_add_module(nyu_finger_hwp_cpp MODULE ${nyu_finger_hwp_SRC_FILES})
+  target_link_libraries(nyu_finger_hwp_cpp PRIVATE pybind11::module)
+  target_link_libraries(nyu_finger_hwp_cpp PRIVATE nyu_finger)
+  target_link_libraries(nyu_finger_hwp_cpp PRIVATE dynamic_graph_manager::dynamic_graph_manager)
+
+  install(TARGETS nyu_finger_hwp_cpp DESTINATION ${python_install_dir}/${PROJECT_NAME})
+endif(${dynamic_graph_manager_FOUND})
+
 
 # install the python package too
 install(

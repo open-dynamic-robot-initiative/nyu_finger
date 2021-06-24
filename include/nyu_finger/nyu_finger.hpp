@@ -8,15 +8,20 @@
 
 #pragma once
 
-#include <blmc_drivers/devices/spi_motor_board.hpp>
-#include "blmc_robots/common_header.hpp"
-#include "blmc_drivers/serial_reader.hpp"
-#include "blmc_drivers/blmc_joint_module.hpp"
-#include "blmc_robots/common_header.hpp"
+#include <odri_control_interface/calibration.hpp>
+#include <odri_control_interface/robot.hpp>
+#include <odri_control_interface/common.hpp>
 
 namespace nyu_finger
 {
 typedef Eigen::Matrix<double, 3, 1> Vector3d;
+
+enum NYUFingerState
+{
+    initial,
+    ready,
+    calibrate
+};
 
 /**
  * @brief Definition and drivers for the NYUFinger robot.
@@ -35,18 +40,46 @@ public:
      * the sensors to 0.
      * @param if_name Interface for connection to hardware.
      */
-    void initialize(const std::string &network_id);
+    void initialize(const std::string &network_id, const Vector3d& motor_numbers);
 
     /**
-     * @brief Sets the maximum joint torques.
+     * @brief Sets the maximum motor current.
      */
-    void set_max_joint_torques(const double& max_joint_torques);
+    void set_max_current(const double& max_current);
 
     /**
      * @brief send_target_torques sends the target currents to the motors.
      */
     void send_target_joint_torque(
         const Eigen::Ref<Vector3d> target_joint_torque);
+
+    /**
+     * @brief Sets the desired joint position of the P controller running on
+     * the card.
+     */
+    void send_target_joint_position(
+        const Eigen::Ref<Vector3d> target_joint_position);
+
+    /**
+     * @brief Sets the desired joint velocity of the D controller running on
+     * the card.
+     */
+    void send_target_joint_velocity(
+        const Eigen::Ref<Vector3d> target_joint_velocity);
+
+    /**
+     * @brief Sets the desired joint position gain P for the P controller
+     * running on the card.
+     */
+    void send_target_joint_position_gains(
+        const Eigen::Ref<Vector3d> target_joint_position_gains);
+
+    /**
+     * @brief Sets the desired joint velocity gain D for the D controller
+     * running on the card.
+     */
+    void send_target_joint_velocity_gains(
+        const Eigen::Ref<Vector3d> target_joint_velocity_gains);
 
     /**
      * @brief acquire_sensors acquire all available sensors, WARNING !!!!
@@ -63,6 +96,15 @@ public:
      * @return false in case of failure.
      */
     bool calibrate(const Vector3d& home_offset_rad);
+
+    /** @brief State of the solo robot. */
+    NYUFingerState state_;
+
+    /** @brief Controller to run the calibration procedure */
+    std::shared_ptr<odri_control_interface::JointCalibrator> calib_ctrl_;
+
+    /** @brief Indicator if calibration should start. */
+    bool calibrate_request_;
 
     /**
      * Joint properties
@@ -168,18 +210,6 @@ public:
     const Eigen::Ref<Vector3d> get_joint_encoder_index()
     {
         return joint_encoder_index_;
-    }
-
-    /**
-     * @brief get_slider_positions
-     * @return the current sliders positions.
-     * WARNING !!!!
-     * The method <acquire_sensors>"()" has to be called
-     * prior to any getter to have up to date data.
-     */
-    const Eigen::Ref<Eigen::Vector4d> get_slider_positions()
-    {
-        return slider_positions_;
     }
 
     /**
@@ -321,17 +351,6 @@ private:
      * Additional data
      */
 
-    /**
-     * @brief slider_positions_ is the position of the linear potentiometer.
-     * Can be used as a joystick input.
-     */
-    Eigen::Vector4d slider_positions_;
-
-    /**
-     * @brief For reading the raw slider values from the serial port.
-     */
-    std::vector<int> slider_positions_vector_;
-
     /** @brief This is the name of the network: Left column in ifconfig output
      */
     std::string network_id_;
@@ -354,37 +373,15 @@ private:
      */
     std::shared_ptr<MasterBoardInterface> main_board_ptr_;
 
-    /** @brief Main board blmc_drivers overlay.
-     *
-     * This object contains the API compatible with the blmc_drivers and
-     * BLMCJointModule(s).
+    /**
+     * @brief Collection of joints for nyu finger.
      */
-    std::shared_ptr<blmc_drivers::SpiBus> spi_bus_;
+    std::shared_ptr<odri_control_interface::JointModules> joints_;
 
     /**
-     * @brief Reader for serial port to read arduino slider values.
+     * @brief The odri robot abstraction.
      */
-    std::shared_ptr<blmc_drivers::SerialReader> serial_reader_;
-
-    /** @brief These are the 6 motor boards of the robot. */
-    std::array<std::shared_ptr<blmc_drivers::SpiMotorBoard>, 2> motor_boards_;
-
-    /** @brief motors_ are the objects allowing us to send motor commands and
-     * receive data. */
-    std::array<blmc_robots::MotorInterface_ptr, 3> motors_;
-
-    /** @brief sliders_ these are analogue input, typically from linear
-     * potentiometers. */
-    std::array<blmc_robots::Slider_ptr, 4> sliders_;
-
-    /** @brief Joint modules containing the driving system paramters */
-    blmc_drivers::BlmcJointModules<3> joints_;
-
-    /** @brief Address the rotation direction of the motor. */
-    std::array<bool, 3> reverse_polarities_;
-
-    /** @brief If the physical estop is pressed or not. */
-    bool active_estop_;
+    std::shared_ptr<odri_control_interface::Robot> robot_;
 };
 
 }  // namespace blmc_robots

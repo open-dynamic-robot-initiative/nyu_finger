@@ -7,8 +7,11 @@ include(CMakeFindDependencyMacro)
 # we do not add the other dependencies because these are header files lib
 find_dependency(yaml-cpp CONFIG REQUIRED)
 find_dependency(Eigen3 REQUIRED)
-find_dependency(blmc_drivers REQUIRED)
-find_dependency(blmc_robots REQUIRED)
+find_dependency(odri_control_interface REQUIRED)
+find_dependency(master_board_sdk REQUIRED)
 find_dependency(real_time_tools REQUIRED)
+find_dependency(yaml_utils REQUIRED)
+find_dependency(dynamic_graph_manager QUIET)
+find_dependency(PythonModules COMPONENTS robot_properties_nyu_finger)
 
 check_required_components(nyu_finger)
