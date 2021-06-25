@@ -15,8 +15,8 @@ yaml_file_1 = os.path.join(
 head0 = dynamic_graph_manager_cpp_bindings.DGMHead(yaml_file_0)
 head1 = dynamic_graph_manager_cpp_bindings.DGMHead(yaml_file_1)
 
-P = 3.
-D = 0.05
+P = np.zeros(3)
+D = 0.2 * np.ones(3)
 dt = 0.001
 next_time = time.time() + dt
 do_control = True
@@ -33,9 +33,6 @@ while (do_control):
 
         ###
         # Set the P and D gains.
-        P = np.zeros(3)
-        D = 0.2 * np.ones(3)
-
         head0.set_control('ctrl_joint_position_gains', P)
         head1.set_control('ctrl_joint_position_gains', P)
 
