@@ -15,21 +15,17 @@ yaml_file_1 = os.path.join(
 head0 = dynamic_graph_manager_cpp_bindings.DGMHead(yaml_file_0)
 head1 = dynamic_graph_manager_cpp_bindings.DGMHead(yaml_file_1)
 
-P = 3.
-D = 0.05
+P = np.zeros(3)
+D = 0.3 * np.ones(3)
 dt = 0.001
 next_time = time.time() + dt
 do_control = True
 
-target_pos = np.zeros(3)
-offset = 0
-
-c = 0
+ti = 0
 
 # In your control loop:
 while (do_control):
     if time.time() >= next_time:
-        c += 1
         next_time += dt
 
         ###
@@ -37,25 +33,23 @@ while (do_control):
         head0.read()
         head1.read()
 
-        # Get a reference to the joint velocities.
-        joint_positions = head0.get_sensor('joint_positions')
-        joint_velocities = head0.get_sensor('joint_velocities')
+        ###
+        # Set the P and D gains.
+        head0.set_control('ctrl_joint_position_gains', P)
+        head1.set_control('ctrl_joint_position_gains', P)
 
-        # Run a simple PD controller.
-        tau = P * (target_pos - joint_positions) + -D * joint_velocities
-        head0.set_control('ctrl_joint_torques', tau)
+        head0.set_control('ctrl_joint_velocity_gains', D)
+        head1.set_control('ctrl_joint_velocity_gains', D)
 
-        # Get a reference to the joint velocities.
-        joint_positions = head1.get_sensor('joint_positions')
-        joint_velocities = head1.get_sensor('joint_velocities')
-
-        # Run a simple PD controller.
-        tau = P * (target_pos - joint_positions) + -D * joint_velocities
-        head1.set_control('ctrl_joint_torques', tau)
+        if ti % 1000 == 0:
+            print('finger0.calibration [Rad]:', -head0.get_sensor('joint_positions'))
+            print('finger1.calibration [Rad]:', -head1.get_sensor('joint_positions'))
+            print('')
 
         ###
         # Write the results into shared memory again.
         head0.write()
         head1.write()
+        ti += 1
 
     time.sleep(0.0001)

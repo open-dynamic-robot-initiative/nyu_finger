@@ -83,8 +83,8 @@ void NYUFinger::initialize(const std::string &network_id, const Vector3d& motor_
 
 
     double HAA = 1.0;
-    double HFE = 1.0;
-    double KFE = 1.0;
+    double HFE = 1.5;
+    double KFE = 1.5;
     Eigen::VectorXd joint_lower_limits(3);
     Eigen::VectorXd joint_upper_limits(3);
     joint_lower_limits << -HAA, -HFE, -KFE;

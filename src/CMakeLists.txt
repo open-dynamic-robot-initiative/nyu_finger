@@ -37,39 +37,6 @@ endmacro()
 
 create_robots_library(nyu_finger)
 
-
-#
-# Optionally build the DynamiGraphManager main programs.
-#
-if(${dynamic_graph_manager_FOUND})
-  message(STATUS "Build the dynamic_graph_manager main programs.")
-  macro(build_dgm_programs robot_name)
-    add_executable(dg_main_${robot_name}
-      dynamic_graph_manager/dgm_${robot_name}.cpp
-      dynamic_graph_manager/dg_main_${robot_name}.cpp
-    )
-
-    # Add the include dependencies.
-    target_include_directories(
-      dg_main_${robot_name} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                            $<INSTALL_INTERFACE:include>)
-    # Link the dependencies.
-    target_link_libraries(dg_main_${robot_name}
-      nyu_finger dynamic_graph_manager::dynamic_graph_manager)
-    # Get the yaml configuration for the DGM.
-    string(
-    CONCAT dgm_yaml_path
-         "${PythonModules_robot_properties_nyu_finger_PATH}/"
-         "robot_properties_nyu_finger/robot_properties_nyu_finger/dynamic_graph_manager")
-    target_compile_definitions(dg_main_${robot_name}
-      PUBLIC ROBOT_PROPERTIES_YAML_PATH="${dgm_yaml_path}")
-    # Export the target.
-    list(APPEND all_src_targets dg_main_${robot_name})
-    list(APPEND all_exe_targets dg_main_${robot_name})
-  endmacro()
-  build_dgm_programs(nyu_finger)
-endif(${dynamic_graph_manager_FOUND})
-
 #
 # Install and Export the libraries.
 #

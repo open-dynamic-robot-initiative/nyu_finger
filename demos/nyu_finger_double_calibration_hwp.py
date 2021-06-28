@@ -2,7 +2,6 @@ import os.path
 import numpy as np
 
 from robot_properties_nyu_finger.config import NYUFingerConfig
-
 from nyu_finger.nyu_finger_hwp_cpp import NYUFingerHWP
 
 if __name__ == "__main__":
@@ -20,5 +19,5 @@ if __name__ == "__main__":
     print()
     input("Press enter to start calibration.")
 
-    finger0.calibrate_from_yaml()
-    finger1.calibrate_from_yaml()
+    finger0.calibrate(np.zeros(3))
+    finger1.calibrate(np.zeros(3))
