@@ -1,0 +1,4 @@
+{
+    "build-dependencies": ["dynamic_graph_manager"],
+    "test-dependencies": ["googletest-distribution"]
+}
