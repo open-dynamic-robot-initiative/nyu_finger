@@ -8,7 +8,10 @@
  */
 
 #include "nyu_finger/dynamic_graph_manager/dgm_nyu_finger.hpp"
+
+#ifdef BUILD_WITH_ROS
 #include "dynamic_graph_manager/ros.hpp"
+#endif
 
 namespace nyu_finger
 {
@@ -31,6 +34,7 @@ void DGMNYUFinger::initialize_drivers()
                         "index_to_zero_angle",
                         zero_to_index_angle_from_file_);
 
+#ifdef BUILD_WITH_ROS
     // Get the hardware communication ros node handle.
     dynamic_graph_manager::RosNodePtr ros_node_handle =
         dynamic_graph_manager::get_ros_node(com_ros_node_name_);
@@ -43,6 +47,7 @@ void DGMNYUFinger::initialize_drivers()
                       this,
                       std::placeholders::_1,
                       std::placeholders::_2)));
+#endif
 
     std::string network_id;
     YAML::ReadParameter(
@@ -173,6 +178,7 @@ void DGMNYUFinger::set_motor_controls_from_map(
     }
 }
 
+#ifdef BUILD_WITH_ROS
 void DGMNYUFinger::calibrate_joint_position_callback(
     mim_msgs::srv::JointCalibration::Request::SharedPtr,
     mim_msgs::srv::JointCalibration::Response::SharedPtr res)
@@ -186,6 +192,7 @@ void DGMNYUFinger::calibrate_joint_position_callback(
     // registered in the hardware process.
     res->sanity_check = true;
 }
+#endif
 
 void DGMNYUFinger::calibrate_joint_position(
     Eigen::Ref<nyu_finger::Vector3d> zero_to_index_angle)

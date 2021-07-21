@@ -16,6 +16,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 #
+# Options
+#
+OPTION(BUILD_WITH_ROS "Build with ROS" OFF)
+
+#
 # Dependencies
 #
 find_package(pybind11 CONFIG REQUIRED)
@@ -28,6 +33,10 @@ find_package(odri_control_interface REQUIRED)
 find_package(master_board_sdk REQUIRED)
 find_package(real_time_tools REQUIRED)
 find_package(yaml_utils REQUIRED)
+
+if (BUILD_WITH_ROS)
+  find_package(rclcpp REQUIRED)
+endif()
 
 # Find resources from robot_properties packages.
 find_package(PythonModules COMPONENTS robot_properties_nyu_finger)
@@ -66,6 +75,11 @@ if(${dynamic_graph_manager_FOUND})
   target_link_libraries(nyu_finger_hwp_cpp PRIVATE pybind11::module)
   target_link_libraries(nyu_finger_hwp_cpp PRIVATE nyu_finger)
   target_link_libraries(nyu_finger_hwp_cpp PRIVATE dynamic_graph_manager::dynamic_graph_manager)
+
+  # Define flag if building with ros.
+  if (BUILD_WITH_ROS)
+    target_compile_definitions(nyu_finger_hwp_cpp PUBLIC BUILD_WITH_ROS="true")
+  endif()
 
   install(TARGETS nyu_finger_hwp_cpp DESTINATION ${python_install_dir}/${PROJECT_NAME})
 endif(${dynamic_graph_manager_FOUND})
