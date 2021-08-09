@@ -9,9 +9,12 @@
 #pragma once
 
 #include "nyu_finger/nyu_finger.hpp"
-#include "mim_msgs/srv/joint_calibration.hpp"
 #include "dynamic_graph_manager/hardware_process.hpp"
 #include "yaml_utils/yaml_cpp_fwd.hpp"
+
+#ifdef BUILD_WITH_ROS
+#include "mim_msgs/srv/joint_calibration.hpp"
+#endif
 
 namespace nyu_finger
 {
@@ -55,6 +58,7 @@ public:
     void set_motor_controls_from_map(
         const dynamic_graph_manager::VectorDGMap& map);
 
+#ifdef BUILD_WITH_ROS
     /**
      * @brief Ros callback for the callibration procedure. Warning the robot
      * will move to the next the joint index and back to "0" upon this call.
@@ -68,6 +72,7 @@ public:
     void calibrate_joint_position_callback(
         mim_msgs::srv::JointCalibration::Request::SharedPtr req,
         mim_msgs::srv::JointCalibration::Response::SharedPtr res);
+#endif
 
     /**
      * @brief Calibrate the robot joint position

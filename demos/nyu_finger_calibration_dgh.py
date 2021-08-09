@@ -10,7 +10,7 @@ yaml_file = os.path.join(
     NYUFingerConfig.dgm_yaml_dir, 'dgm_parameters_nyu_finger.yaml')
 
 # Create the dgm communication to the control process.
-head = dynamic_graph_manager_cpp_bindings.DGMHead(yaml_file_0)
+head = dynamic_graph_manager_cpp_bindings.DGMHead(yaml_file)
 
 P = np.zeros(3)
 D = 0.3 * np.ones(3)
