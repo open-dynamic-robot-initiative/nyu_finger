@@ -103,10 +103,6 @@ void NYUFinger::initialize(const std::string &network_id, const Vector3d& motor_
         20.,
         0.2);
 
-    // Define the robot.
-    robot_ = std::make_shared<odri_control_interface::Robot>(
-        main_board_ptr_, joints_, nullptr /* imu */);
-
     // Define the calibration.
     std::vector<odri_control_interface::CalibrationMethod> directions{
         odri_control_interface::POSITIVE,
@@ -119,7 +115,12 @@ void NYUFinger::initialize(const std::string &network_id, const Vector3d& motor_
     Eigen::VectorXd position_offsets(3);
     position_offsets.fill(0.);
     calib_ctrl_ = std::make_shared<odri_control_interface::JointCalibrator>(
-        robot_->joints, directions, position_offsets, 5., 0.05, 1.0, 0.001);
+        joints_, directions, position_offsets, 5., 0.05, 1.0, 0.001);
+
+    // Define the robot.
+    robot_ = std::make_shared<odri_control_interface::Robot>(
+        main_board_ptr_, joints_, nullptr /* imu */, calib_ctrl_);
+
 
     // Initialize the robot.
     robot_->Init();
