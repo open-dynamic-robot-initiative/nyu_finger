@@ -83,8 +83,8 @@ void NYUFinger::initialize(const std::string &network_id, const Vector3d& motor_
 
 
     double HAA = 1.0;
-    double HFE = 1.5;
-    double KFE = 1.5;
+    double HFE = 2.0;
+    double KFE = 2.0;
     Eigen::VectorXd joint_lower_limits(3);
     Eigen::VectorXd joint_upper_limits(3);
     joint_lower_limits << -HAA, -HFE, -KFE;
@@ -100,7 +100,7 @@ void NYUFinger::initialize(const std::string &network_id, const Vector3d& motor_
         motor_reversed,
         joint_lower_limits,
         joint_upper_limits,
-        20.,
+        80.,
         0.2);
 
     // Define the calibration.
@@ -120,7 +120,6 @@ void NYUFinger::initialize(const std::string &network_id, const Vector3d& motor_
     // Define the robot.
     robot_ = std::make_shared<odri_control_interface::Robot>(
         main_board_ptr_, joints_, nullptr /* imu */, calib_ctrl_);
-
 
     // Initialize the robot.
     robot_->Init();
