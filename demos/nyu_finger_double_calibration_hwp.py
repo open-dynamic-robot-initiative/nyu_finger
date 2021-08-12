@@ -1,17 +1,16 @@
 import os.path
 import numpy as np
 
-from robot_properties_nyu_finger.config import NYUFingerConfig
+from robot_properties_nyu_finger.config import (
+    NYUFingerDoubleConfig0, NYUFingerDoubleConfig1)
 from nyu_finger.nyu_finger_hwp_cpp import NYUFingerHWP
 
 if __name__ == "__main__":
     finger0 = NYUFingerHWP()
     finger1 = NYUFingerHWP()
 
-    finger0.initialize(os.path.join(
-        NYUFingerConfig.dgm_yaml_dir, 'dgm_parameters_nyu_finger_double_0.yaml'))
-    finger1.initialize(os.path.join(
-        NYUFingerConfig.dgm_yaml_dir, 'dgm_parameters_nyu_finger_double_1.yaml'))
+    finger0.initialize(NYUFingerDoubleConfig0.dgm_yaml_path)
+    finger1.initialize(NYUFingerDoubleConfig1.dgm_yaml_path)
 
     finger0.run()
     finger1.run()
