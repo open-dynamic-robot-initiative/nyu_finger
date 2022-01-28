@@ -7,8 +7,8 @@ class NYUFingerReal:
         self.robot = py_nyu_finger.NYUFinger()
         self.last_sleep = time.time()
 
-    def initialize(self, device):
-        self.robot.initialize(device)
+    def initialize(self, device, motor_numbers):
+        self.robot.initialize(device, motor_numbers)
 
     def get_state(self):
         self.robot.acquire_sensors()
