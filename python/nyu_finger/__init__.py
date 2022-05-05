@@ -18,10 +18,7 @@ class NYUFingerReal:
         self.robot.send_target_joint_torque(tau)
 
     def step(self):
-        sleep_duration = 0.001 - (time.time() - self.last_sleep)
-
-        if sleep_duration > 0.:
-            time.sleep(sleep_duration)
-            self.last_sleep += sleep_duration
-        else:
-            self.last_sleep = time.time()
+        while time.time() < self.last_sleep + 0.001:
+            time.sleep(0.0002)
+        
+        self.last_sleep += 0.001
